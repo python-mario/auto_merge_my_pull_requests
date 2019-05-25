@@ -32,7 +32,6 @@ def get_session(github_token):
 
 if __name__ == '__main__':
     github_token = os.environ["GITHUB_TOKEN"]
-    github_repository = os.environ["GITHUB_REPOSITORY"]
 
     github_event_path = os.environ["GITHUB_EVENT_PATH"]
     event_data = json.load(open(github_event_path))
@@ -48,21 +47,17 @@ if __name__ == '__main__':
         print("*** Check run is not part of a pull request, so nothing to do")
         sys.exit(78)
 
-    # We should only merge pull requests that have the conclusion "succeeded".
-    #
-    # We get a check_run event in GitHub Actions when the underlying run is
-    # scheduled and completed -- if it doesn't have a conclusion, this field is
-    # set to "null".  In that case, we give up -- we'll get a second event when
-    # the run completes.
+    # We should only merge pull requests that have completed and have the
+    # conclusion "succeeded".
     #
     # See https://developer.github.com/v3/activity/events/types/#checkrunevent
     #
-    conclusion = check_run["conclusion"]
-    print(f"*** Conclusion of {name} is {conclusion}")
-
-    if conclusion is None:
+    if check_run["status"] != "completed":
         print(f"*** Check run {name} has not completed, skipping")
         sys.exit(78)
+
+    conclusion = check_run["conclusion"]
+    print(f"*** Conclusion of {name} is {conclusion}")
 
     if conclusion != "success":
         print(f"*** Check run {name} has failed, will not merge PR")

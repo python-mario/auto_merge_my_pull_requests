@@ -14,6 +14,9 @@ def get_session(github_token):
         "Accept": "; ".join([
             "application/vnd.github.v3+json",
             "application/vnd.github.antiope-preview+json",
+
+            # So we can see if a PR is in a draft state
+            "application/vnd.github.shadow-cat-preview+json",
         ]),
         "Authorization": f"token {github_token}",
         "User-Agent": f"GitHub Actions script in {__file__}"
@@ -73,6 +76,10 @@ if __name__ == '__main__':
 
     print(f"*** Checking pull request #{pr_number}: {pr_src} ~> {pr_dst}")
     pr_data = sess.get(pull_request["url"]).json()
+
+    if pr_data["draft"]:
+        print("*** This is a draft PR, will not merge")
+        sys.exit(78)
 
     pr_title = pr_data["title"]
     print(f"*** Title of PR is {pr_title!r}")

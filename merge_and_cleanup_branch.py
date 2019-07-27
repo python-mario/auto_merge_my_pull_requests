@@ -88,10 +88,8 @@ if __name__ == "__main__":
         print("*** This is a WIP PR, will not merge")
         sys.exit(78)
 
-    pr_user = pr_data["user"]["login"]
-    print(f"*** This PR was opened by {pr_user}")
-    if pr_user != "python-mario-bot":
-        print("*** This PR was opened by somebody who isn't me; requires manual merge")
+    if not any(label["name"] == "merge" for label in pr_data["labels"]):
+        print('The PR has no "merge" label, so not merging.')
         sys.exit(78)
 
     print("*** This PR is ready to be merged.")

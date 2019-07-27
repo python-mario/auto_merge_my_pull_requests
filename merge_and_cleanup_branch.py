@@ -11,15 +11,16 @@ import requests
 def get_session(github_token):
     sess = requests.Session()
     sess.headers = {
-        "Accept": "; ".join([
-            "application/vnd.github.v3+json",
-            "application/vnd.github.antiope-preview+json",
-
-            # So we can see if a PR is in a draft state
-            "application/vnd.github.shadow-cat-preview+json",
-        ]),
+        "Accept": "; ".join(
+            [
+                "application/vnd.github.v3+json",
+                "application/vnd.github.antiope-preview+json",
+                # So we can see if a PR is in a draft state
+                "application/vnd.github.shadow-cat-preview+json",
+            ]
+        ),
         "Authorization": f"token {github_token}",
-        "User-Agent": f"GitHub Actions script in {__file__}"
+        "User-Agent": f"GitHub Actions script in {__file__}",
     }
 
     def raise_for_status(resp, *args, **kwargs):
@@ -33,7 +34,7 @@ def get_session(github_token):
     return sess
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     github_token = os.environ["GITHUB_TOKEN"]
 
     github_event_path = os.environ["GITHUB_EVENT_PATH"]
